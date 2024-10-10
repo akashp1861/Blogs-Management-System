@@ -1,6 +1,6 @@
 # Blogs-Management-System
 
-## Description
+## Introduction 
 The Blog Management System is a web application built using PHP, HTML, CSS, and Bootstrap that allows users to create, manage, and display blog posts. Users can sign up, log in, and update their profiles, while admins can manage all blog content.
 
 ## Features
@@ -11,14 +11,15 @@ The Blog Management System is a web application built using PHP, HTML, CSS, and 
 - View blog posts by each user
 - Responsive design with Bootstrap
 - Error handling for better user experience
+- Admins can manage all user and their blog content.
 
  ## User Interface
  
-### Signup page
+### Signup-page
 ![image](https://github.com/user-attachments/assets/4487f249-b345-4a6b-8a21-70247478f6cf)
 
 
-### Login Page
+### Login-Page
 ![image](https://github.com/user-attachments/assets/23686ac6-3331-4994-adbc-c1c895dd678d)
 
 ### admin-dashboard 
@@ -68,15 +69,47 @@ The Blog Management System is a web application built using PHP, HTML, CSS, and 
 - Navigate to your XAMPP installation directory (usually C:\xampp on Windows).
 - Copy or move the cloned project folder to the htdocs directory.
 
-3. Set Up the Database:
+## Set Up the Database:
 
 - Start XAMPP Control Panel and ensure that both Apache and MySQL services are running.
 - Open your web browser and go to http://localhost/phpmyadmin.
-- Create a new database for the project (e.g., blog_management).
-- If you have an SQL dump file (e.g., blog_management.sql), use the "Import" tab in phpMyAdmin to upload it.
-  [Uploading blogsmanagement.sql…]()
+- Create a new database for the project
+- Database: `blogsmanagement`
 
-4. Update Database Configuration:
+### Create table user:
+  
+CREATE TABLE `user` (
+
+  `sno` int(4) NOT NULL,
+  
+  `username` text NOT NULL,
+  
+  `password` varchar(300) NOT NULL,
+  
+  `role` varchar(10) NOT NULL DEFAULT 'user'
+  
+)
+
+### create table blog_post :
+
+CREATE TABLE `blog_posts` (
+
+  `id` int(11) NOT NULL,
+
+  `title` varchar(255) NOT NULL,
+
+  `content` text NOT NULL,
+
+  `author` varchar(100) NOT NULL,
+
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+
+  `user_id` int(11) DEFAULT NULL
+  
+)
+
+
+### Update Database Configuration:
 
 - Open the partials/-dbconnect.php file.
 - Update the database connection details as follows:
@@ -84,10 +117,10 @@ The Blog Management System is a web application built using PHP, HTML, CSS, and 
 ![image](https://github.com/user-attachments/assets/dcdceaf1-dd0c-40a5-98d9-a72e3f962370)
 
 
-5. Access the Application:
+## Access the Application:
 
 - In your web browser, go to http://localhost/LoginSystem  to access the application.
-- For specific pages, use the query parameters, e.g., http://localhost/<project-folder-name>/?page=login for the login page.
+- For specific pages, use the query parameters, e.g., http://localhost/LoginSystem/?page=-login for the login page.
 
 ## Usage
 - Sign Up: Create a new account using the signup page.
