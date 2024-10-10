@@ -60,6 +60,38 @@ The Blog Management System is a web application built using PHP, HTML, CSS, and 
 - Git (to clone the repository)
 
 ## Setup Instructions
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/blog-management-system.git
+1. Clone the repository: 
+- git clone https://github.com/akashp1861/Blogs-Management-System.git
+
+2. Move the Project to the htdocs Directory:
+
+- Navigate to your XAMPP installation directory (usually C:\xampp on Windows).
+- Copy or move the cloned project folder to the htdocs directory.
+
+3. Set Up the Database:
+
+- Start XAMPP Control Panel and ensure that both Apache and MySQL services are running.
+- Open your web browser and go to http://localhost/phpmyadmin.
+- Create a new database for the project (e.g., blog_management).
+- If you have an SQL dump file (e.g., blog_management.sql), use the "Import" tab in phpMyAdmin to upload it.
+  [Uploading blogsmanagement.sql…]()
+
+4. Update Database Configuration:
+
+- Open the partials/-dbconnect.php file.
+- Update the database connection details as follows:
+
+![image](https://github.com/user-attachments/assets/dcdceaf1-dd0c-40a5-98d9-a72e3f962370)
+
+
+5. Access the Application:
+
+- In your web browser, go to http://localhost/LoginSystem  to access the application.
+- For specific pages, use the query parameters, e.g., http://localhost/<project-folder-name>/?page=login for the login page.
+
+## Usage
+- Sign Up: Create a new account using the signup page.
+- Login: Access your account using the login page.
+- Update Profile: Users can update their username and password in the profile section.
+- Manage Blogs: Users can create, edit, and delete their blog posts.
+- Manage user and Blog : Admin can update the role of user and edit their blogs.
