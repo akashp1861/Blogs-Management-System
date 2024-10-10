@@ -3,7 +3,7 @@
 session_start();
 
 // Include the database connection
-include '../partials/_dbconnect.php';
+include '../partials/-dbconnect.php';
 
 // Check if a blog ID is provided
 if (isset($_GET['id'])) {
@@ -21,7 +21,7 @@ if (isset($_GET['id'])) {
             // Delete the blog post
             $deleteSQL = "DELETE FROM blog_posts WHERE id = $postID";
             if (mysqli_query($con, $deleteSQL)) {
-                header('Location: view_blog.php');
+                header('Location: -view-blog.php');
                 exit;
             } else {
                 echo 'Error deleting the blog post.';

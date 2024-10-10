@@ -2,7 +2,7 @@
 
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
-    header("location: login.php");
+    header("location: -login.php");
     exit();
 }
 
@@ -55,7 +55,7 @@ $username = $_SESSION['username'];
     </style>
 </head>
 <body>
-<?php  require 'partials/_nav.php' ;?>
+<?php  require 'partials/-nav.php' ;?>
 <div class="container">
 
     <div class="dashboard-container mx-auto col-md-8">
@@ -66,7 +66,7 @@ $username = $_SESSION['username'];
             "Blogging connects your voice to the world"
         </div>
 
-        <a href="welcome.php" class="btn btn-danger btn-logout">All Blogs Posts</a>
+        <a href= "BlogPost/-blog-post-feed.php" class="btn btn-danger btn-logout">All Blogs Posts</a>
     </div>
 </div>
 

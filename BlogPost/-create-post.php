@@ -1,10 +1,10 @@
 
 <?php
 session_start(); // Start session to access session variables
-require '../partials/_nav.php';
+require '../partials/-nav.php';
 // Ensure the user is logged in
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("location: login.php"); // Redirect to login if not logged in
+    header("location: -login.php"); // Redirect to login if not logged in
     exit;
 }
 ?>
@@ -56,7 +56,7 @@ body {
     <div class="container">
         <div class="form-container">
             <h1>Create a Blog Post</h1>
-            <form action="process_blog_post.php" method="POST">
+            <form action="-process-blog-post.php" method="POST">
                 <div class="mb-3">
                     <label for="title" class="form-label">Blog Title</label>
                     <input type="text" class="form-control" id="title" name="title" required>
@@ -72,7 +72,7 @@ body {
                     <input type="text" class="form-control" id="author" name="author" value="<?php echo $_SESSION['username']; ?>" readonly >
                 </div>
 
-                <button type="submit" class="btn btn-custom w-100">Create Post</button>
+                <button type="submit" class="btn btn-custom w-100">Create Blog</button>
             </form>
         </div>
     </div>

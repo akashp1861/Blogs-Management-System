@@ -1,15 +1,15 @@
 <?php
 session_start();
 if (!isset($_SESSION['username'])) {
-    header("location:login.php");
+    header("location:-login.php");
     exit();
 }
 
 $showAlert = false;
 $showError = false;
-require 'partials/_nav.php' ;
+require 'partials/-nav.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include 'partials/_dbconnect.php';
+    include 'partials/-dbconnect.php';
     
     $val = $_SESSION['sno'];
     $Username = $_POST['Username'];
@@ -17,14 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cpassword = $_POST['cpassword'];
 
     if ($Password == $cpassword) {
-        // Update username and password
-        $sql = "UPDATE contact SET username = '$Username', password = '$Password' WHERE sno = '$val'";
+        // Hash the new password before updating
+        $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
+
+        // Update username and password in the database
+        $sql = "UPDATE user SET username = '$Username', password = '$hashedPassword' WHERE sno = '$val'";
         $result = mysqli_query($con, $sql);
 
         if ($result) {
             $showAlert = true;
             $_SESSION['username'] = $Username;
-            $_SESSION['password'] = $Password;
         } else {
             $showError = "Failed to update profile.";
         }
@@ -104,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         <?php endif; ?>
 
-        <form action="/LoginSystem/update.php" method="post">
+        <form action="/LoginSystem/-update.php" method="post">
             <div class="mb-3">
                 <label for="Username" class="form-label">Username</label>
                 <input type="text" class="form-control" name="Username" value="<?php echo $_SESSION['username']; ?>" required>
@@ -112,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="mb-3">
                 <label for="Password" class="form-label">Password</label>
-                <input type="password" class="form-control" name="Password" value="<?php echo $_SESSION['password']; ?>" required>
+                <input type="password" class="form-control" name="Password"  required>
             </div>
 
             <div class="mb-3">
@@ -122,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Update</button>
-            <p class="message text-center">Go to your <a href="/LoginSystem/login.php">Login</a> page</p>
+            <p class="message text-center">Go to your <a href="/LoginSystem/-login.php">Login</a> page</p>
         </form>
     </div>
 </div>

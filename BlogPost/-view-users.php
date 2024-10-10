@@ -9,10 +9,10 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'admin') {
 }
 
 // Include database connection
-include '../partials/_dbconnect.php';
+include '../partials/-dbconnect.php';
 
 // Fetch all users from the database
-$sql = "SELECT * FROM contact";
+$sql = "SELECT * FROM user";
 $result = mysqli_query($con, $sql);
 ?>
 
@@ -90,7 +90,7 @@ $result = mysqli_query($con, $sql);
     </style>
 </head>
 <body>
-    <?php require '../partials/_nav.php'; ?>
+    <?php require '../partials/-nav.php'; ?>
     
     <div class="container">
         <h3 class="mt-4">Manage Users</h3>
@@ -118,10 +118,10 @@ $result = mysqli_query($con, $sql);
                     echo '<td>' . htmlspecialchars($row['username']) . '</td>';
                     echo '<td>' . htmlspecialchars($row['role']) . '</td>';
                     echo '<td>';
-                    echo '<a href="edit_user.php?sno=' . htmlspecialchars($row['sno']) . '" class="btn btn-primary btn-sm">Edit</a> ';
-                    echo '<a href="delete_user.php?sno=' . $row['sno'] . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user and all their blogs?\')">Delete</a>';
+                    echo '<a href="-edit-user-role.php?sno=' . htmlspecialchars($row['sno']) . '" class="btn btn-primary btn-sm">Edit</a> ';
+                    echo '<a href="-delete-user.php?sno=' . $row['sno'] . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user and all their blogs?\')">Delete</a>';
                     echo ' ';
-                    echo '<a href="user_blog.php?sno=' . $row['sno'] . '" class="btn btn-info btn-sm">Blogs</a>';  // Add Blogs button here
+                    echo '<a href="-manage-user-blog-by-admin.php?sno=' . $row['sno'] . '" class="btn btn-info btn-sm">Blogs</a>';  // Add Blogs button here
                     echo '</td>';
                     echo '</tr>';
                 }

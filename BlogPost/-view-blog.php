@@ -9,8 +9,8 @@ if (!isset($_SESSION['loggedin'])) {
 }
 
 // Include the database connection and other necessary files
-require '../partials/_nav.php';
-include '../partials/_dbconnect.php';
+require '../partials/-nav.php';
+include '../partials/-dbconnect.php';
 
 ?>
 
@@ -41,7 +41,7 @@ include '../partials/_dbconnect.php';
         background-color: #556B2F; /* Dark Green */
         height: 50px;
         padding: 10px;
-        width: 20%;
+        width: 30%;
     }
 
     .card {
@@ -108,6 +108,11 @@ include '../partials/_dbconnect.php';
             font-size: 24px;
         }
     }
+
+    .notice{
+        color: white;
+        font-size: 24px;
+    }
 </style>
 
 </head>
@@ -116,7 +121,7 @@ include '../partials/_dbconnect.php';
         <?php
         // Display username and role
         $name = isset($_SESSION['username']) ? $_SESSION['username'] : 'User';
-        echo '<h4>' . $name. " Blogs:".'</h4>';
+        echo '<h4>' . $name. " Blogs ".'</h4>';
 
         // Fetch user ID from session
         $loggedInUserId = isset($_SESSION['sno']) ? $_SESSION['sno'] : 0;  // Default value 0 if not set
@@ -130,8 +135,8 @@ include '../partials/_dbconnect.php';
         }
 
         // Fetch blogs associated with this user
-        $sql = "SELECT blog_posts.*, contact.username FROM blog_posts 
-                JOIN contact ON blog_posts.user_id = contact.sno
+        $sql = "SELECT blog_posts.*, user.username FROM blog_posts 
+                JOIN user ON blog_posts.user_id = user.sno
                 WHERE blog_posts.user_id = $userID";
         $result = mysqli_query($con, $sql);
 
@@ -157,8 +162,8 @@ include '../partials/_dbconnect.php';
                 // Display edit and delete buttons for admin or the owner of the blog post
                 if ($_SESSION['role'] == 'admin' || $_SESSION['sno'] == $row['user_id']) {
                     echo '<div class="mt-2">';
-                    echo '<a href="edit_blog.php?id=' . $postID . '" class="btn btn-warning btn-sm">Edit</a>';
-                    echo ' <a href="delete_blog.php?id=' . $postID . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this blog post?\');">Delete</a>';
+                    echo '<a href="-edit-blog-by-admin.php?id=' . $postID . '" class="btn btn-warning btn-sm">Edit</a>';
+                    echo ' <a href="-delete-blog.php?id=' . $postID . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this blog post?\');">Delete</a>';
                     echo '</div>';
                 }
 
@@ -168,7 +173,7 @@ include '../partials/_dbconnect.php';
             }
             echo '</div>';
         } else {
-            echo '<p>No blogs found for this user.</p>';
+            echo '<p class ="notice"> No blogs found .</p>';
         }
         ?>
     </div>

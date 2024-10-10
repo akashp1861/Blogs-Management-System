@@ -1,39 +1,35 @@
 <?php
-$login = false;
 $showError = false;
+$showSuccess = false;
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    include 'partials/_dbconnect.php';
+    include 'partials/-dbconnect.php';
     $Username = $_POST['Username'];
     $Password = $_POST['Password'];
+    $cPassword = $_POST['cPassword'];
 
-    // Validate inputs before querying the database
-    if (!empty($Username) && !empty($Password)) {
-        $sql = "SELECT * FROM contact WHERE username = '$Username' AND password = '$Password'";
-        $result = mysqli_query($con, $sql);
-        if ($result && mysqli_num_rows($result) == 1) {
-            $row = mysqli_fetch_assoc($result);
-            $userID = $row['sno'];
+    // Check if the username already exists
+    $existSQL = "SELECT * FROM user WHERE username = '$Username'";
+    $result = mysqli_query($con, $existSQL);
+    $numExistRows = mysqli_num_rows($result);
 
-            session_start();
-            $_SESSION['loggedin'] = true;
-            $_SESSION['sno'] = $userID;
-            $_SESSION['username'] = $Username;
-            $_SESSION['password'] = $Password;
-            $_SESSION['role'] = $row['role'];
-
-            $login = true;
-            // Redirect based on role
-            if ($row['role'] == 'admin') {
-                header("location: admin_dashboard.php");
-            } else {
-                header("location: user_dashboard.php");
-            }
-        } else {
-            $showError = "Invalid Username or Password";
-        }
+    if ($numExistRows > 0) {
+        $showError = "Username already exists.";
+    } elseif ($Password != $cPassword) {
+        $showError = "Passwords do not match.";
     } else {
-        $showError = "Please fill in both fields.";
+        // Encrypt the password before inserting it into the database
+        $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
+
+        // Insert the new user with the hashed password
+        $sql = "INSERT INTO user (username, password) VALUES ('$Username', '$hashedPassword')";
+        $result = mysqli_query($con, $sql);
+
+        if ($result) {
+            $showSuccess = "Your account has been created successfully. You can now log in.";
+        } else {
+            $showError = "An error occurred during signup. Please try again.";
+        }
     }
 }
 ?>
@@ -43,15 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
-    
+    <title>Signup</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <style>
         body {
-            background-color: #333;
+            background-color: #333 ;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -59,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             font-family: 'Arial', sans-serif;
         }
         
-        .login-container {
+        .signup-container {
             background-color: white;
             padding: 40px;
             border-radius: 10px;
@@ -68,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             max-width: 400px;
         }
 
-        .login-container h1 {
+        .signup-container h1 {
             text-align: center;
             margin-bottom: 30px;
             font-size: 24px;
@@ -83,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         .btn-custom:hover {
             background-color: #556B2F;
+            color: white;
         }
 
         .form-text {
@@ -108,25 +105,25 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 </head>
 <body>
 
-<div class="login-container">
-    <h1>Login</h1>
+<div class="signup-container">
+    <h1>Signup</h1>
 
     <!-- Display error/success message if applicable -->
     <?php if ($showError): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong></strong> <?php echo $showError; ?>
+            <strong>Error!</strong> <?php echo $showError; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
-    <?php if ($login): ?>
+    <?php if ($showSuccess): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Success!</strong> You are logged in.
+            <strong>Success!</strong> <?php echo $showSuccess; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
-    <form action="/LoginSystem/login.php" method="POST">
+    <form action="/LoginSystem/-signup.php" method="POST">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="Username" required>
@@ -134,10 +131,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" name="Password" required>
-            <div class="form-text">Make sure to type the correct password.</div>
         </div>
-        <button type="submit" class="btn btn-custom w-100">Login</button>
-        <p class="message">Not registered? <a href="/LoginSystem/signup.php">Create an account</a></p>
+        <div class="mb-3">
+            <label for="cPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="cPassword" name="cPassword" required>
+            <div class="form-text">Make sure to enter the same password for confirmation.</div>
+        </div>
+        <button type="submit" class="btn btn-custom w-100">Signup</button>
+        <p class="message">Already registered? <a href="/LoginSystem/-login.php">Login here</a></p>
     </form>
 </div>
 

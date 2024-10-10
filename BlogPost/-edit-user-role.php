@@ -4,19 +4,19 @@ session_start();
 
 // Check if the user is logged in as admin
 if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'admin') {
-    header("Location: login.php");
+    header("Location: -login.php");
     exit;
 }
 
 // Include the database connection
-include '../partials/_dbconnect.php';
+include '../partials/-dbconnect.php';
 
 // Check if the user ID is provided in the URL
 if (isset($_GET['sno'])) {
     $userID = $_GET['sno'];
 
     // Fetch user details based on the user ID
-    $sql = "SELECT * FROM contact WHERE sno = $userID";
+    $sql = "SELECT * FROM user WHERE sno = $userID";
     $result = mysqli_query($con, $sql);
 
     if ($result && mysqli_num_rows($result) == 1) {
@@ -44,12 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $role = mysqli_real_escape_string($con, $role);
 
     // Update user details in the database
-    $updateSQL = "UPDATE contact SET username = '$username', role = '$role' WHERE sno = $userID";
+    $updateSQL = "UPDATE user SET username = '$username', role = '$role' WHERE sno = $userID";
     $updateResult = mysqli_query($con, $updateSQL);
 
     if ($updateResult) {
         // Successfully updated
-        header("Location: get_user.php");
+        header("Location: -view-users.php");
         exit;
     } else {
         echo "Error updating user.";
@@ -119,12 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
-<?php require '../partials/_nav.php'?>
+<?php require '../partials/-nav.php'?>
 <div class="container">
     <h2>Edit User</h2>
 
     <!-- Form to edit user -->
-    <form method="POST" action="edit_user.php?sno=<?php echo $userID; ?>">
+    <form method="POST" action="-edit-user-role.php?sno=<?php echo $userID; ?>">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>

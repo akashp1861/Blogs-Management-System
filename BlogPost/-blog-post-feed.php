@@ -1,8 +1,8 @@
 <?php 
 // Start session
 session_start();
-require 'partials/_nav.php'; // Navbar file
-include 'partials/_dbconnect.php'; // Database connection
+require '../partials/-nav.php'; // Navbar file
+include '../partials/-dbconnect.php'; // Database connection
 ?>
 
 <!DOCTYPE html>
@@ -62,8 +62,8 @@ include 'partials/_dbconnect.php'; // Database connection
 
         .no-blogs-message {
             text-align: center;
-            font-size: 18px;
-            color: #666;
+            font-size: 20px;
+            color: white;
         }
 
         /* Adjust card body to expand as needed */
@@ -80,8 +80,8 @@ include 'partials/_dbconnect.php'; // Database connection
 
         <?php
         // Fetch all blogs from the database, joining with the user table to get the author's name
-        $sql = "SELECT blog_posts.*, contact.username FROM blog_posts 
-                JOIN contact ON blog_posts.user_id = contact.sno
+        $sql = "SELECT blog_posts.*, user.username FROM blog_posts 
+                JOIN user ON blog_posts.user_id = user.sno
                 ORDER BY blog_posts.created_at DESC";  // Order by most recent first
         $result = mysqli_query($con, $sql);
 
