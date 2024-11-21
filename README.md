@@ -120,7 +120,7 @@ CREATE TABLE `blog_posts` (
 ## Access the Application:
 
 - In your web browser, go to http://localhost/LoginSystem  to access the application.
-- For specific pages, use the query parameters, e.g., http://localhost/LoginSystem/?page=-login for the login page.
+- For specific pages, use the query parameters, e.g., http://localhost/LoginSystem/?page=login for the login page.
 
 ## Usage
 - Sign Up: Create a new account using the signup page.
