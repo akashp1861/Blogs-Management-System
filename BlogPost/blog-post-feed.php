@@ -1,8 +1,8 @@
 <?php 
 // Start session
 session_start();
-require '../partials/-nav.php'; // Navbar file
-include '../partials/-dbconnect.php'; // Database connection
+include '../partials/nav.php'; // Navbar file
+include '../partials/dbconnect.php'; // Database connection
 ?>
 
 <!DOCTYPE html>

@@ -1,9 +1,8 @@
 <?php
-// Start session
 session_start();
 
 // Include the database connection
-include '../partials/-dbconnect.php';
+include '../partials/dbconnect.php';
 
 // Check if a blog ID is provided
 if (isset($_GET['id'])) {
@@ -21,21 +20,24 @@ if (isset($_GET['id'])) {
             // Delete the blog post
             $deleteSQL = "DELETE FROM blog_posts WHERE id = $postID";
             if (mysqli_query($con, $deleteSQL)) {
-                header('Location: -view-blog.php');
-                exit;
+                // Redirect based on the user role
+                if ($_SESSION['role'] == 'admin') {
+                    header('Location: view-users.php');  // Redirect admin
+                    exit;
+                } elseif ($_SESSION['role'] == 'user') {
+                    header('Location: view-blog-by-user.php');  // Redirect user
+                    exit;
+                }
             } else {
                 echo 'Error deleting the blog post.';
             }
         } else {
-            echo 'Unauthorized access.';
-            exit;
+            echo 'You are not authorized to delete this blog post.';
         }
     } else {
         echo 'Blog post not found.';
-        exit;
     }
 } else {
     echo 'No blog post ID provided.';
-    exit;
 }
 ?>

@@ -1,9 +1,11 @@
 <?php
+session_start();
 $showError = false;
 $showSuccess = false;
 
+
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    include 'partials/-dbconnect.php';
+    include 'partials/dbconnect.php';
     $Username = $_POST['Username'];
     $Password = $_POST['Password'];
     $cPassword = $_POST['cPassword'];
@@ -123,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         </div>
     <?php endif; ?>
 
-    <form action="/LoginSystem/-signup.php" method="POST">
+    <form action="/LoginSystem/signup.php" method="POST">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="Username" required>
@@ -137,12 +139,28 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             <input type="password" class="form-control" id="cPassword" name="cPassword" required>
             <div class="form-text">Make sure to enter the same password for confirmation.</div>
         </div>
+
         <button type="submit" class="btn btn-custom w-100">Signup</button>
-        <p class="message">Already registered? <a href="/LoginSystem/-login.php">Login here</a></p>
+        
+        <?php if(!isset($_SESSION['loggedin'])) :?>
+        <p class="message">Already registered? <a href="/LoginSystem/login.php" >Login here</a></p>
+        <?php else: ?>
+        <p class="message">Already registered? <a href="/LoginSystem/login.php" onclick="confirmLogout(event)" >Login here</a></p> 
+        <?php endif; ?>
     </form>
 </div>
-
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<script>
+  function confirmLogout(event) {
+    event.preventDefault(); // Prevent the default link behavior
+    let result = confirm("Are you sure you want to leave this page?");
+    if (result) {
+      // If the user confirms, redirect to logout.php
+      window.location.href = '/LoginSystem/logout.php';
+    }
+  }
+</script>

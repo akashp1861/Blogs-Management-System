@@ -2,9 +2,9 @@
 // Start session
 session_start();
 
-require '../partials/-nav.php';
+include '../partials/nav.php';
 // Include the database connection
-include '../partials/-dbconnect.php';
+include '../partials/dbconnect.php';
 
 
 // Check if a blog ID is provided
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $updateSQL = "UPDATE blog_posts SET title = '$title', content = '$content' WHERE id = $postID";
     if (mysqli_query($con, $updateSQL)) {
-        header('Location:-view-blog-by-user.php');
+        header('Location:view-blog-by-user.php');
         exit;
     } else {
         echo 'Error updating the blog post.';
@@ -88,10 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
+
 <div class="container">
         <div class="form-container">
             <h1>Edit Blog Post</h1>
-            <form action="-edit-blog-by-user.php?id=<?php echo $postID;?>" method="POST">
+            <form action="edit-blog-by-user.php?id=<?php echo $postID;?>" method="POST">
                 <div class="mb-3">
                     <label for="title" class="form-label">Blog Title</label>
                     <input type="text" class="form-control" id="title" name="title" value="<?php echo htmlspecialchars($blog['title']);?>" required>
@@ -106,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="text" class="form-control" id="author" name="author" value="<?php echo $_SESSION['username']; ?>" readonly >
                 </div>
 
-                <button type="submit" class="btn btn-custom w-100">Edit Post</button>
+                <button type="submit" class="btn btn-custom w-100">Edit blog</button>
             </form>
         </div>
     </div>

@@ -1,7 +1,8 @@
 <?php
+
 session_start();
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'user') {
-    header("location: -login.php");
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
+    header("location: login.php");
     exit();
 }
 
@@ -13,7 +14,7 @@ $username = $_SESSION['username'];
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>User Dashboard</title>
+    <title>Admin Dashboard</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,13 +33,11 @@ $username = $_SESSION['username'];
             text-align: center;
         }
 
-
         .btn-logout {
             margin-top: 30px;
             background-color: #556B2F;
-            border-color: black;
         }
-         
+
         h1 {
             color: #333333;
         }
@@ -51,21 +50,23 @@ $username = $_SESSION['username'];
             font-style: italic;
             color: #4CAF50;
             margin-top: 20px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-<?php  require 'partials/-nav.php';?>
+<?php  include 'partials/nav.php';?>
 <div class="container">
+
     <div class="dashboard-container mx-auto col-md-8">
         <h1>Welcome, <?php echo ucfirst($username); ?>!</h1>
-        <p>You are logged in as a User.</p>
+        <p>You are logged in as an Admin.</p>
 
         <div class="quote">
             "Blogging connects your voice to the world"
         </div>
 
-        <a href="BlogPost/-blog-post-feed.php" class="btn btn-danger btn-logout">All Blogs posts</a>
+        <a href= "BlogPost/blog-post-feed.php" class="btn btn-danger btn-logout">All Blogs Posts</a>
     </div>
 </div>
 

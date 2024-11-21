@@ -2,9 +2,9 @@
 // Start session
 session_start();
 
-require '../partials/-nav.php';
+include '../partials/nav.php';
 // Include the database connection
-include '../partials/-dbconnect.php';
+include '../partials/dbconnect.php';
 
 // Check if a blog ID is provided
 if (isset($_GET['id'])) {
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $updateSQL = "UPDATE blog_posts SET title = '$title', content = '$content' WHERE id = $postID";
     if (mysqli_query($con, $updateSQL)) {
-        header('Location: -view-users.php');
+        header('Location: view-users.php');
         exit;
     } else {
         echo 'Error updating the blog post.';
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="container">
         <div class="form-container">
             <h1>Edit Blog Post</h1>
-            <form action="-edit-blog-by-admin.php?id=<?php echo $postID;?>" method="POST">
+            <form action="edit-blog-by-admin.php?id=<?php echo $postID;?>" method="POST">
                 <div class="mb-3">
                     <label for="title" class="form-label">Blog Title</label>
                     <input type="text" class="form-control" id="title" name="title" value="<?php echo htmlspecialchars($blog['title']);?>" required>

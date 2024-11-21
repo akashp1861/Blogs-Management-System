@@ -3,7 +3,7 @@
     $showError = false;
     
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
-        include 'partials/-dbconnect.php';
+        include 'partials/dbconnect.php';
         $Username = $_POST['Username'];
         $Password = $_POST['Password'];
     
@@ -27,9 +27,9 @@
                     $login = true;
                     // Redirect based on role
                     if ($row['role'] == 'admin') {
-                        header("location: -admin-dashboard.php");
+                        header("location: admin-dashboard.php");
                     } else {
-                        header("location: -user-dashboard.php");
+                        header("location: user-dashboard.php");
                     }
                 } else {
                     $showError = "Invalid Username or Password";
@@ -131,7 +131,7 @@
             </div>
         <?php endif; ?>
 
-        <form action="/LoginSystem/-login.php" method="POST">
+        <form action="/LoginSystem/login.php" method="POST">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="Username" required>
@@ -142,7 +142,7 @@
                 <div class="form-text">Make sure to type the correct password.</div>
             </div>
             <button type="submit" class="btn btn-custom w-100">Login</button>
-            <p class="message">Not registered? <a href="/LoginSystem/-signup.php">Create an account</a></p>
+            <p class="message">Not registered? <a href="/LoginSystem/signup.php">Create an account</a></p>
         </form>
     </div>
 

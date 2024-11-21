@@ -4,12 +4,12 @@ session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['loggedin'])) {
-    header("Location: -login.php");
+    header("Location: login.php");
     exit;
 }
 
 // Include the database connection
-include '../partials/-dbconnect.php';
+include '../partials/dbconnect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    
@@ -29,16 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Prepare SQL query
     $sql = "INSERT INTO `blogsmanagement`.`blog_posts` (title, content, author, user_id, created_at) 
             VALUES ('$title', '$content', '$author', $user_id, NOW())";
-
+               
     // Execute SQL query
     $result = mysqli_query($con, $sql);
-
     if ($result) {
         // Success: Redirect to confirmation page
-        header("Location: -view-blog.php");  // Adjust this as needed
+        header("Location: view-blog.php");  // Adjust this as needed
     } else {
         // Error: Redirect with error message
-        header("Location: admin_dashboard.php?post_error=true");
+        header("Location: admin-dashboard.php?post_error=true");
     }
 }
 

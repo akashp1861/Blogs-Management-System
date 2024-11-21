@@ -4,12 +4,12 @@ session_start();
 
 // Check if the user is logged in as admin
 if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'admin') {
-    header("Location: -login.php");
+    header("Location: login.php");
     exit;
 }
 
 // Include the database connection
-include '../partials/-dbconnect.php';
+include '../partials/dbconnect.php';
 
 // Check if the user ID is provided in the URL
 if (isset($_GET['sno'])) {
@@ -26,7 +26,7 @@ if (isset($_GET['sno'])) {
 
         if ($deleteUserResult) {
             // User and their blogs deleted successfully, redirect to the manage users page
-            header("Location: -view-users.php");
+            header("Location: view-users.php");
             exit;
         } else {
             echo "Error deleting user.";

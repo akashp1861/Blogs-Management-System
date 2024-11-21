@@ -1,15 +1,15 @@
 <?php
 session_start();
 if (!isset($_SESSION['username'])) {
-    header("location:-login.php");
+    header("location:login.php");
     exit();
 }
 
 $showAlert = false;
 $showError = false;
-require 'partials/-nav.php';
+include 'partials/nav.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include 'partials/-dbconnect.php';
+    include 'partials/dbconnect.php';
     
     $val = $_SESSION['sno'];
     $Username = $_POST['Username'];
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         <?php endif; ?>
 
-        <form action="/LoginSystem/-update.php" method="post">
+        <form action="/LoginSystem/update.php" method="post">
             <div class="mb-3">
                 <label for="Username" class="form-label">Username</label>
                 <input type="text" class="form-control" name="Username" value="<?php echo $_SESSION['username']; ?>" required>
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Update</button>
-            <p class="message text-center">Go to your <a href="/LoginSystem/-login.php">Login</a> page</p>
+            <p class="message text-center">Go to your <a href="/LoginSystem/login.php">Login</a> page</p>
         </form>
     </div>
 </div>

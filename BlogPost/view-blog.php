@@ -9,8 +9,8 @@ if (!isset($_SESSION['loggedin'])) {
 }
 
 // Include the database connection and other necessary files
-require '../partials/-nav.php';
-include '../partials/-dbconnect.php';
+include '../partials/nav.php';
+include '../partials/dbconnect.php';
 
 ?>
 
@@ -87,6 +87,7 @@ include '../partials/-dbconnect.php';
     .btn-danger{
         background-color: #556B2F;
         border-color : green;
+        margin : 8px;
 
     }
 
@@ -162,8 +163,8 @@ include '../partials/-dbconnect.php';
                 // Display edit and delete buttons for admin or the owner of the blog post
                 if ($_SESSION['role'] == 'admin' || $_SESSION['sno'] == $row['user_id']) {
                     echo '<div class="mt-2">';
-                    echo '<a href="-edit-blog-by-admin.php?id=' . $postID . '" class="btn btn-warning btn-sm">Edit</a>';
-                    echo ' <a href="-delete-blog.php?id=' . $postID . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this blog post?\');">Delete</a>';
+                    echo '<a href="edit-blog-by-admin.php?id=' . $postID . '" class="btn btn-warning btn-sm">Edit</a>';
+                    echo '<a href="delete-blog.php?id=' . $postID . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this blog post?\');">Delete</a>';
                     echo '</div>';
                 }
 

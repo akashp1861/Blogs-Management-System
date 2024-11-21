@@ -10,39 +10,39 @@
       <!--  show admin_dashboard OR user_dashboard  -->
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') : ?>
           <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/LoginSystem/-admin-dashboard.php">Home</a>
+          <a class="nav-link active" aria-current="page" href="/LoginSystem/admin-dashboard.php">Home</a>
         </li>
           <?php else: ?>
 
 
            <li class="nav-item">
-             <a class="nav-link active" aria-current="page" href="/LoginSystem/-user-dashboard.php">Home</a>
+             <a class="nav-link active" aria-current="page" href="/LoginSystem/user-dashboard.php">Home</a>
            </li>
           <?php endif; ?>
      
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/LoginSystem/BlogPost/-blog-post-feed.php">Blogs</a>
+          <a class="nav-link active" aria-current="page" href="/LoginSystem/BlogPost/blog-post-feed.php">Blogs</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/LoginSystem/BlogPost/-create-post.php">Create Blog</a>
+          <a class="nav-link" href="/LoginSystem/BlogPost/create-post.php">Create Blog</a>
         </li>   
 
 
 
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') : ?>
         <li class="nav-item">
-          <a class="nav-link" href="/LoginSystem/BlogPost/-view-blog.php">Your Blogs</a>
+          <a class="nav-link" href="/LoginSystem/BlogPost/view-blog.php">Your Blogs</a>
         </li>
         <?php else: ?>
           <li class="nav-item">
-          <a class="nav-link" href="/LoginSystem/BlogPost/-view-blog-by-user.php">Your Blogs</a>
+          <a class="nav-link" href="/LoginSystem/BlogPost/view-blog-by-user.php">Your Blogs</a>
         </li>
         <?php endif; ?>
 
         <!-- Only show Manage Users if the logged-in user is an admin -->
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') : ?>
         <li class="nav-item">
-          <a class="nav-link" href="/LoginSystem/BlogPost/-view-users.php">Manage Users</a>
+          <a class="nav-link" href="/LoginSystem/BlogPost/view-users.php">Manage Users</a>
         </li>
         <?php endif; ?>
       </ul>       
@@ -53,8 +53,8 @@
             Profile
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="/LoginSystem/-update.php">Profile</a></li>
-            <li><a class="dropdown-item" href="/LoginSystem/-signup.php">Signup</a></li>
+            <li><a class="dropdown-item" href="/LoginSystem/update.php">Profile</a></li>
+            <li><a class="dropdown-item" href="/LoginSystem/signup.php">Signup</a></li>
             <li><a class="dropdown-item" href="" onclick="confirmLogout(event)">Logout</a></li>
           </ul>
         </li>
@@ -71,7 +71,7 @@
     let result = confirm("Are you sure you want to log out?");
     if (result) {
       // If the user confirms, redirect to logout.php
-      window.location.href = '/LoginSystem/-logout.php';
+      window.location.href = '/LoginSystem/logout.php';
     }
   }
 </script>

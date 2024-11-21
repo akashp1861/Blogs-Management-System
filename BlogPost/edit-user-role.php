@@ -4,12 +4,12 @@ session_start();
 
 // Check if the user is logged in as admin
 if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'admin') {
-    header("Location: -login.php");
+    header("Location: login.php");
     exit;
 }
 
 // Include the database connection
-include '../partials/-dbconnect.php';
+include '../partials/dbconnect.php';
 
 // Check if the user ID is provided in the URL
 if (isset($_GET['sno'])) {
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($updateResult) {
         // Successfully updated
-        header("Location: -view-users.php");
+        header("Location: view-users.php");
         exit;
     } else {
         echo "Error updating user.";
@@ -119,12 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
-<?php require '../partials/-nav.php'?>
+<?php include '../partials/nav.php'?>
 <div class="container">
     <h2>Edit User</h2>
 
     <!-- Form to edit user -->
-    <form method="POST" action="-edit-user-role.php?sno=<?php echo $userID; ?>">
+    <form method="POST" action="edit-user-role.php?sno=<?php echo $userID; ?>">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
