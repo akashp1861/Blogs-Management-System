@@ -6,14 +6,16 @@ include '../partials/nav.php';
 // Include the database connection
 include '../partials/dbconnect.php';
 
-
 // Check if a blog ID is provided
 if (isset($_GET['id'])) {
     $postID = $_GET['id'];
 
-    // Fetch blog details
-    $sql = "SELECT * FROM blog_posts WHERE id = $postID";
-    $result = mysqli_query($con, $sql);
+    // Fetch blog details using a prepared statement
+    $sql = "SELECT * FROM blog_posts WHERE id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $postID); // Bind $postID as an integer
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($result) == 1) {
         $blog = mysqli_fetch_assoc($result);
@@ -27,6 +29,7 @@ if (isset($_GET['id'])) {
         echo 'Blog post not found.';
         exit;
     }
+    mysqli_stmt_close($stmt); // Close the prepared statement
 } else {
     echo 'No blog post ID provided.';
     exit;
@@ -34,16 +37,22 @@ if (isset($_GET['id'])) {
 
 // Handle form submission for editing the blog post
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = mysqli_real_escape_string($con, $_POST['title']);
-    $content = mysqli_real_escape_string($con, $_POST['content']);
+    $title = $_POST['title'];
+    $content = $_POST['content'];
 
-    $updateSQL = "UPDATE blog_posts SET title = '$title', content = '$content' WHERE id = $postID";
-    if (mysqli_query($con, $updateSQL)) {
-        header('Location:view-blog-by-user.php');
+    // Update the blog using a prepared statement
+    $updateSQL = "UPDATE blog_posts SET title = ?, content = ? WHERE id = ?";
+    $stmtUpdate = mysqli_prepare($con, $updateSQL);
+    mysqli_stmt_bind_param($stmtUpdate, 'ssi', $title, $content, $postID); // Bind title (string), content (string), and postID (integer)
+    $updateResult = mysqli_stmt_execute($stmtUpdate);
+
+    if ($updateResult) {
+        header('Location: view-blog-by-user.php');
         exit;
     } else {
         echo 'Error updating the blog post.';
     }
+    mysqli_stmt_close($stmtUpdate); // Close the prepared statement
 }
 ?>
 

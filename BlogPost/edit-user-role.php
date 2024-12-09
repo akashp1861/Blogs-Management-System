@@ -15,9 +15,12 @@ include '../partials/dbconnect.php';
 if (isset($_GET['sno'])) {
     $userID = $_GET['sno'];
 
-    // Fetch user details based on the user ID
-    $sql = "SELECT * FROM user WHERE sno = $userID";
-    $result = mysqli_query($con, $sql);
+    // Fetch user details using a prepared statement
+    $sql = "SELECT * FROM user WHERE sno = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $userID); // Bind $userID as an integer
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if ($result && mysqli_num_rows($result) == 1) {
         // Fetch the user data
@@ -27,6 +30,7 @@ if (isset($_GET['sno'])) {
         echo "User not found.";
         exit;
     }
+    mysqli_stmt_close($stmt); // Close the prepared statement
 } else {
     // If no user ID is provided in the URL
     echo "No user ID provided.";
@@ -39,13 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $role = $_POST['role'];
 
-    // Sanitize inputs
-    $username = mysqli_real_escape_string($con, $username);
-    $role = mysqli_real_escape_string($con, $role);
-
-    // Update user details in the database
-    $updateSQL = "UPDATE user SET username = '$username', role = '$role' WHERE sno = $userID";
-    $updateResult = mysqli_query($con, $updateSQL);
+    // Update user details in the database using a prepared statement
+    $updateSQL = "UPDATE user SET username = ?, role = ? WHERE sno = ?";
+    $stmtUpdate = mysqli_prepare($con, $updateSQL);
+    mysqli_stmt_bind_param($stmtUpdate, 'ssi', $username, $role, $userID); // Bind username (string), role (string), and userID (integer)
+    $updateResult = mysqli_stmt_execute($stmtUpdate);
 
     if ($updateResult) {
         // Successfully updated
@@ -54,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         echo "Error updating user.";
     }
+    mysqli_stmt_close($stmtUpdate); // Close the prepared statement
 }
 ?>
 

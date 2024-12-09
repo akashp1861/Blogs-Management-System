@@ -11,9 +11,16 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'admin') {
 // Include database connection
 include '../partials/dbconnect.php';
 
-// Fetch all users from the database
-$sql = "SELECT * FROM user";
-$result = mysqli_query($con, $sql);
+// Fetch all users from the database using prepared statements
+$sql = "SELECT sno, username, role FROM user";
+$stmt = $con->prepare($sql); // Prepare the statement
+
+if ($stmt) {
+    $stmt->execute(); // Execute the statement
+    $result = $stmt->get_result(); // Get the result set
+} else {
+    die("Error preparing statement: " . $con->error);
+}
 ?>
 
 <!doctype html>
@@ -112,7 +119,7 @@ $result = mysqli_query($con, $sql);
             </thead>
             <tbody>
                 <?php
-                while ($row = mysqli_fetch_assoc($result)) {
+                while ($row = $result->fetch_assoc()) {
                     echo '<tr>';
                     echo '<td>' . htmlspecialchars($row['sno']) . '</td>';
                     echo '<td>' . htmlspecialchars($row['username']) . '</td>';
@@ -136,6 +143,15 @@ $result = mysqli_query($con, $sql);
 </html>
 
 <?php
-// Close the database connection
-mysqli_close($con);
+// Close the statement and database connection
+$stmt->close();
+$con->close();
 ?>
+
+
+
+
+
+
+
+

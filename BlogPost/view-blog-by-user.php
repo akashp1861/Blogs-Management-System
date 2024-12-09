@@ -42,92 +42,42 @@ include '../partials/dbconnect.php';
         height: 50px;
         padding: 10px;
         width: 25%;
-        
     }
 
-    .card {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease-in-out;
-        margin-bottom: 20px;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-    }
-
-    .card-title {
-        font-size: 24px;
-        color: #333;
-    }
-
-    .card-text {
-        color: #555;
-        font-size: 16px;
-    }
-
-    .card-footer {
-        background-color: #f1f1f1;
-        font-size: 14px;
-        color: #888;
-    }
-
-   
-    .btn-warning{
-        background-color: white;
-        color: black;
-        border-color :black;
-
-    }
-    .btn-warning:hover{
-        background-color: #90EE90;
-        color: black;
-        border-color : #90EE90;
-
-    }
-
-    .btn-danger{
-        background-color: #556B2F;
-        border-color : green;
-
-    }
-
-    .btn-sm {
-        font-size: 14px;
-    }
-
-    /* Responsive handling */
-    @media (max-width: 768px) {
-        .card-title {
-            font-size: 20px;
-        }
-
-        .card-text {
-            font-size: 14px;
-        }
-
-        h2 {
-            font-size: 24px;
-        }
-    }
-
-    .notice{
+    .notice {
         color: white;
         font-size: 20px;
     }
-</style>
 
+    .btn-warning {
+        background-color: white;
+        color: black;
+        border-color: black;
+    }
+
+    .btn-warning:hover {
+        background-color: #90EE90;
+        color: black;
+        border-color: #90EE90;
+    }
+
+    .btn-danger {
+        background-color: #556B2F;
+        border-color: green;
+    }
+    </style>
 </head>
 <body>
     <div class="container mt-4">
         <?php
         // Display username and role
         $name = isset($_SESSION['username']) ? $_SESSION['username'] : 'User';
-        echo '<h4>' . $name. " Blogs:".'</h4>';
+        echo '<h4>' . $name . " Blogs:" . '</h4>';
 
         // Fetch user ID from session
         $loggedInUserId = isset($_SESSION['sno']) ? $_SESSION['sno'] : 0;  // Default value 0 if not set
 
-        // If the user is an admin, allow them to view all posts or filter by a user
+        // Determine which blogs to display
         if ($_SESSION['role'] == 'admin' && isset($_GET['user_id'])) {
             $userID = $_GET['user_id'];  // View blogs of a specific user
         } else {
@@ -135,15 +85,24 @@ include '../partials/dbconnect.php';
             $userID = $loggedInUserId;
         }
 
-        // Fetch blogs associated with this user
+        // Prepare the SQL query using a prepared statement
         $sql = "SELECT blog_posts.*, user.username FROM blog_posts 
                 JOIN user ON blog_posts.user_id = user.sno 
-                WHERE blog_posts.user_id = $userID ";
-        $result = mysqli_query($con, $sql);
+                WHERE blog_posts.user_id = ?";
+        $stmt = $con->prepare($sql);
 
-        if (mysqli_num_rows($result) > 0) {
+        // Bind the parameter
+        $stmt->bind_param("i", $userID); // "i" indicates integer type
+
+        // Execute the query
+        $stmt->execute();
+
+        // Fetch the result
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
             echo '<div class="row">';
-            while ($row = mysqli_fetch_assoc($result)) {
+            while ($row = $result->fetch_assoc()) {
                 $postID = $row['id'];
                 $title = htmlspecialchars($row['title']);
                 $content = htmlspecialchars($row['content']); // Show full content
@@ -176,6 +135,9 @@ include '../partials/dbconnect.php';
         } else {
             echo "<p class = 'notice'> No blogs found !!.</p>";
         }
+
+        // Close the statement
+        $stmt->close();
         ?>
     </div>
 

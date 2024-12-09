@@ -30,8 +30,6 @@ include '../partials/dbconnect.php'; // Database connection
             background-color: #556B2F;
             color: white;
             height: 50px;
-            
-            
         }
 
         .card {
@@ -79,11 +77,19 @@ include '../partials/dbconnect.php'; // Database connection
         <h2 class="text-center"> Blogs Feed</h2>
 
         <?php
-        // Fetch all blogs from the database, joining with the user table to get the author's name
+        // Fetch all blogs using prepared statements
         $sql = "SELECT blog_posts.*, user.username FROM blog_posts 
                 JOIN user ON blog_posts.user_id = user.sno
                 ORDER BY blog_posts.created_at DESC";  // Order by most recent first
-        $result = mysqli_query($con, $sql);
+
+        // Prepare the statement
+        $stmt = mysqli_prepare($con, $sql);
+
+        // Execute the prepared statement
+        mysqli_stmt_execute($stmt);
+
+        // Get the result
+        $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) > 0) {
             // Displaying posts one by one (full width)
@@ -111,6 +117,9 @@ include '../partials/dbconnect.php'; // Database connection
             // If no blogs found
             echo '<p class="no-blogs-message">No blogs found.</p>';
         }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
         ?>
 
     </div>

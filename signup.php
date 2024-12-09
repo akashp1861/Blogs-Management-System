@@ -10,10 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $Password = $_POST['Password'];
     $cPassword = $_POST['cPassword'];
 
-    // Check if the username already exists
-    $existSQL = "SELECT * FROM user WHERE username = '$Username'";
-    $result = mysqli_query($con, $existSQL);
-    $numExistRows = mysqli_num_rows($result);
+    // Check if the username already exists using a prepared statement
+    $existSQL = "SELECT * FROM user WHERE username = ?";
+    $stmt = mysqli_prepare($con, $existSQL);
+    mysqli_stmt_bind_param($stmt, "s", $Username); // Bind the Username parameter
+    mysqli_stmt_execute($stmt); // Execute the prepared statement
+    $result = mysqli_stmt_get_result($stmt); // Get the result set
+    $numExistRows = mysqli_num_rows($result); // Count rows
 
     if ($numExistRows > 0) {
         $showError = "Username already exists.";
@@ -23,9 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         // Encrypt the password before inserting it into the database
         $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
 
-        // Insert the new user with the hashed password
-        $sql = "INSERT INTO user (username, password) VALUES ('$Username', '$hashedPassword')";
-        $result = mysqli_query($con, $sql);
+        // Insert the new user with the hashed password using a prepared statement
+        $sql = "INSERT INTO user (username, password) VALUES (?, ?)";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, "ss", $Username, $hashedPassword); // Bind parameters
+        $result = mysqli_stmt_execute($stmt); // Execute the statement
 
         if ($result) {
             $showSuccess = "Your account has been created successfully. You can now log in.";
@@ -33,6 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             $showError = "An error occurred during signup. Please try again.";
         }
     }
+
+    // Close the prepared statement
+    mysqli_stmt_close($stmt);
 }
 ?>
 

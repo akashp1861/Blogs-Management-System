@@ -8,66 +8,53 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
-    body{
-        background-color: #333;
-    }
-
-
-    .card {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    margin-bottom: 20px;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-    h3.my-4{
-        color: white;
-    }  
-
-    .btn-primary{
-        background-color: #90EE90;
-        color: black;  
-        border-color : black;  
-    }
-    .btn-primary:hover{
-        background-color: #556B2F;
-        color: white;   
-        border-color : black;  
-
-    }
-
-    .btn-warning{
-        background-color: white;
-        color: black;
-        border-color :black;
-
-    }
-    .btn-warning:hover{
-        background-color: #90EE90;
-        color: black;
-        border-color : #90EE90;
-
-    }
-
-    .btn-danger{
-        background-color: #556B2F;
-        border-color : green;
-
-    }
-
-    .notice{
-        color: white;
-        font-size: 20px;
-    }
+        body {
+            background-color: #333;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        h3.my-4 {
+            color: white;
+        }
+        .btn-primary {
+            background-color: #90EE90;
+            color: black;
+            border-color: black;
+        }
+        .btn-primary:hover {
+            background-color: #556B2F;
+            color: white;
+            border-color: black;
+        }
+        .btn-warning {
+            background-color: white;
+            color: black;
+            border-color: black;
+        }
+        .btn-warning:hover {
+            background-color: #90EE90;
+            color: black;
+            border-color: #90EE90;
+        }
+        .btn-danger {
+            background-color: #556B2F;
+            border-color: green;
+        }
+        .notice {
+            color: white;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-4">   
+    <div class="container mt-4">
 
 <?php
 // Start session
@@ -86,17 +73,24 @@ include '../partials/dbconnect.php';
 if (isset($_GET['sno'])) {
     $userID = $_GET['sno'];
 
-    // Fetch the author's name
-    $authorQuery = "SELECT username FROM user WHERE sno = $userID";
-    $authorResult = mysqli_query($con, $authorQuery);
+    // Fetch the author's name using a prepared statement
+    $authorQuery = "SELECT username FROM user WHERE sno = ?";
+    $stmtAuthor = mysqli_prepare($con, $authorQuery);
+    mysqli_stmt_bind_param($stmtAuthor, 'i', $userID);
+    mysqli_stmt_execute($stmtAuthor);
+    $authorResult = mysqli_stmt_get_result($stmtAuthor);
 
     if ($authorResult && mysqli_num_rows($authorResult) == 1) {
         $authorRow = mysqli_fetch_assoc($authorResult);
         $authorName = htmlspecialchars($authorRow['username']);
+        mysqli_stmt_close($stmtAuthor); // Close the statement
 
-        // Fetch all blogs associated with this user
-        $sql = "SELECT * FROM blog_posts WHERE user_id = $userID";
-        $result = mysqli_query($con, $sql);
+        // Fetch all blogs associated with this user using a prepared statement
+        $sql = "SELECT * FROM blog_posts WHERE user_id = ?";
+        $stmtBlogs = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmtBlogs, 'i', $userID);
+        mysqli_stmt_execute($stmtBlogs);
+        $result = mysqli_stmt_get_result($stmtBlogs);
 
         if (mysqli_num_rows($result) > 0) {
             echo '<div class="container">';
@@ -107,13 +101,13 @@ if (isset($_GET['sno'])) {
             echo '<div class="row">';
 
             while ($row = mysqli_fetch_assoc($result)) {
-                $blogID = $row['id'];  // Assuming the blog_posts table has an "id" field
+                $blogID = $row['id']; // Assuming the blog_posts table has an "id" field
                 $title = htmlspecialchars($row['title']);
-                $content = htmlspecialchars(substr($row['content'], 0, 20000));  // Truncate content to 200 chars
+                $content = htmlspecialchars(substr($row['content'], 0, 20000)); // Truncate content to 200 chars
 
                 // Display each blog in a card
-                echo '<div class="col-md-12 mb-4">';  // Adjust to "col-md-6" for a vertical layout
-                echo '<div class="card h-100">';  // Full height card for even spacing
+                echo '<div class="col-md-12 mb-4">'; // Adjust to "col-md-6" for a vertical layout
+                echo '<div class="card h-100">'; // Full height card for even spacing
                 echo '<div class="card-body">';
                 echo '<h4 class="card-title">' . $title . '</h4>';
                 echo '<p class="card-text">' . nl2br($content) . '...</p>';
@@ -137,8 +131,10 @@ if (isset($_GET['sno'])) {
             echo '</div>';
         } else {
             echo '<a href="view-users.php" class="btn btn-primary mb-4">Back to Users</a>';
-            echo "<p class ='notice'> No blogs found for $authorName!!.</p>";
+            echo "<p class='notice'>No blogs found for $authorName!</p>";
         }
+
+        mysqli_stmt_close($stmtBlogs); // Close the statement
     } else {
         // Author not found
         echo '<p>Author not found.</p>';

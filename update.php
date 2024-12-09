@@ -11,7 +11,7 @@ include 'partials/nav.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include 'partials/dbconnect.php';
     
-    $val = $_SESSION['sno'];
+    $val = $_SESSION['sno'];       // Retrieve the user ID
     $Username = $_POST['Username'];
     $Password = $_POST['Password'];
     $cpassword = $_POST['cpassword'];
@@ -21,9 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
 
         // Update username and password in the database
-        $sql = "UPDATE user SET username = '$Username', password = '$hashedPassword' WHERE sno = '$val'";
-        $result = mysqli_query($con, $sql);
-
+        $sql = "UPDATE user SET username = ?, password = ? WHERE sno = ? ";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, "ssi", $Username, $hashedPassword, $val);
+        $result = mysqli_stmt_execute($stmt);
         if ($result) {
             $showAlert = true;
             $_SESSION['username'] = $Username;

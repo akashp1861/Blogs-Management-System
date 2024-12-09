@@ -12,7 +12,6 @@ if (!isset($_SESSION['loggedin'])) {
 include '../partials/dbconnect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-   
     // Get form inputs
     $title = $_POST['title'];
     $content = $_POST['content'];
@@ -21,24 +20,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $author = $_SESSION['username'];
     $user_id = $_SESSION['sno'];  // Assuming user ID is stored in session
 
-    // Sanitize inputs
-    $title = mysqli_real_escape_string($con, $title);
-    $content = mysqli_real_escape_string($con, $content);
-    $author = mysqli_real_escape_string($con, $author);
-    
-    // Prepare SQL query
+    // Prepare the SQL query using a prepared statement
     $sql = "INSERT INTO `blogsmanagement`.`blog_posts` (title, content, author, user_id, created_at) 
-            VALUES ('$title', '$content', '$author', $user_id, NOW())";
-               
-    // Execute SQL query
-    $result = mysqli_query($con, $sql);
-    if ($result) {
+            VALUES (?, ?, ?, ?, NOW())";
+    $stmt = mysqli_prepare($con, $sql);
+    // Bind the parameters to the prepared statement
+    mysqli_stmt_bind_param($stmt, "sssi", $title, $content, $author, $user_id);
+
+    // Execute the prepared statement
+    if (mysqli_stmt_execute($stmt)) {
         // Success: Redirect to confirmation page
         header("Location: view-blog.php");  // Adjust this as needed
     } else {
         // Error: Redirect with error message
         header("Location: admin-dashboard.php?post_error=true");
     }
+
+    // Close the statement
+    mysqli_stmt_close($stmt);
 }
 
 // Close the database connection

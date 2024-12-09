@@ -23,7 +23,8 @@ include '../partials/dbconnect.php';
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-    /* Custom styles */
+       
+/* Custom styles */
     body {
         font-family: 'Arial', sans-serif;
         background-color: #333; /* Dark gray background */
@@ -114,67 +115,83 @@ include '../partials/dbconnect.php';
         color: white;
         font-size: 24px;
     }
-</style>
-
+    </style>
 </head>
 <body>
     <div class="container mt-4">
         <?php
         // Display username and role
         $name = isset($_SESSION['username']) ? $_SESSION['username'] : 'User';
-        echo '<h4>' . $name. " Blogs ".'</h4>';
+        echo '<h4>' . $name . " Blogs " . '</h4>';
 
         // Fetch user ID from session
         $loggedInUserId = isset($_SESSION['sno']) ? $_SESSION['sno'] : 0;  // Default value 0 if not set
 
-        // If the user is an admin, allow them to view all posts or filter by a user
+        // Determine the user ID to fetch blogs for
         if ($_SESSION['role'] == 'admin' && isset($_GET['user_id'])) {
             $userID = $_GET['user_id'];  // View blogs of a specific user
         } else {
-            // Non-admin users can only see their own blogs
-            $userID = $loggedInUserId;
+            $userID = $loggedInUserId; // Non-admin users can only see their own blogs
         }
 
-        // Fetch blogs associated with this user
+        // Prepare the SQL query
         $sql = "SELECT blog_posts.*, user.username FROM blog_posts 
                 JOIN user ON blog_posts.user_id = user.sno
-                WHERE blog_posts.user_id = $userID";
-        $result = mysqli_query($con, $sql);
+                WHERE blog_posts.user_id = ?";
 
-        if (mysqli_num_rows($result) > 0) {
-            echo '<div class="row">';
-            while ($row = mysqli_fetch_assoc($result)) {
-                $postID = $row['id'];
-                $title = htmlspecialchars($row['title']);
-                $content = htmlspecialchars($row['content']); // Show full content
-                $created_at = htmlspecialchars($row['created_at']);
-                $author = htmlspecialchars($row['username']);
+        // Initialize a prepared statement
+        $stmt = $con->prepare($sql);
 
-                // Display each blog post
-                echo '<div class="col-md-12">';
-                echo '<div class="card">';
-                echo '<div class="card-body">';
-                echo '<h3 class="card-title">' . $title . '</h3>';
-                echo '<p class="card-text">' . nl2br($content) . '</p>';
-                echo '</div>';
-                echo '<div class="card-footer text-muted">';
-                echo 'Posted on ' . $created_at . ' by ' . $author;
+        if ($stmt) {
+            // Bind the parameter
+            $stmt->bind_param("i", $userID);
 
-                // Display edit and delete buttons for admin or the owner of the blog post
-                if ($_SESSION['role'] == 'admin' || $_SESSION['sno'] == $row['user_id']) {
-                    echo '<div class="mt-2">';
-                    echo '<a href="edit-blog-by-admin.php?id=' . $postID . '" class="btn btn-warning btn-sm">Edit</a>';
-                    echo '<a href="delete-blog.php?id=' . $postID . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this blog post?\');">Delete</a>';
+            // Execute the statement
+            $stmt->execute();
+
+            // Get the result
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                echo '<div class="row">';
+                while ($row = $result->fetch_assoc()) {
+                    $postID = $row['id'];
+                    $title = htmlspecialchars($row['title']);
+                    $content = htmlspecialchars($row['content']); // Show full content
+                    $created_at = htmlspecialchars($row['created_at']);
+                    $author = htmlspecialchars($row['username']);
+
+                    // Display each blog post
+                    echo '<div class="col-md-12">';
+                    echo '<div class="card">';
+                    echo '<div class="card-body">';
+                    echo '<h3 class="card-title">' . $title . '</h3>';
+                    echo '<p class="card-text">' . nl2br($content) . '</p>';
+                    echo '</div>';
+                    echo '<div class="card-footer text-muted">';
+                    echo 'Posted on ' . $created_at . ' by ' . $author;
+
+                    // Display edit and delete buttons for admin or the owner of the blog post
+                    if ($_SESSION['role'] == 'admin' || $_SESSION['sno'] == $row['user_id']) {
+                        echo '<div class="mt-2">';
+                        echo '<a href="edit-blog-by-admin.php?id=' . $postID . '" class="btn btn-warning btn-sm">Edit</a>';
+                        echo '<a href="delete-blog.php?id=' . $postID . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this blog post?\');">Delete</a>';
+                        echo '</div>';
+                    }
+
+                    echo '</div>';
+                    echo '</div>';
                     echo '</div>';
                 }
-
                 echo '</div>';
-                echo '</div>';
-                echo '</div>';
+            } else {
+                echo '<p class="notice"> No blogs found .</p>';
             }
-            echo '</div>';
+
+            // Close the statement
+            $stmt->close();
         } else {
-            echo '<p class ="notice"> No blogs found .</p>';
+            echo '<p class="notice"> Error in preparing the statement. </p>';
         }
         ?>
     </div>
@@ -183,3 +200,5 @@ include '../partials/dbconnect.php';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
